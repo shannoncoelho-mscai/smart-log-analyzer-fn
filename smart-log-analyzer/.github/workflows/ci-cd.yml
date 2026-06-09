@@ -1,0 +1,29 @@
+﻿name: Smart Log Analyzer CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test and Train Model
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Preprocess data
+        run: python src/preprocess.py
+      - name: Train model
+        run: python src/train.py
+      - name: Evaluate model
+        run: python src/evaluate.py
+      - name: Check model files
+        run: |
+          test -f models/model.pkl && echo "model.pkl found"
+          test -f models/scaler.pkl && echo "scaler.pkl found"
